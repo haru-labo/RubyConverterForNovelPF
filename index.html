@@ -2,9 +2,16 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <!-- BULMA -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <!-- IZITOAST -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css">
+    <!-- iconion -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <!-- main.js -->
+    <script src="main.js"></script>
     <title>小説投稿サイト別ルビ記号変換ツール</title>
 </head>
 <body>
@@ -13,14 +20,15 @@
     </header>
     <section class="section">
         <div class="columns is-multiline">
-            <div class="column">
-                <div class="select is-half">
+            <div class="column is-half">
+                <div class="select">
                     <select id="inputType">
                         <option value="Narou" selected>小説家になろう/ノべラボ</option>
                         <option value="Alpha">アルファポリス</option>
                     </select>
                 </div>
-            </div>
+                <textarea id="beforeText" class="textarea is-primary" placeholder="変換する文章を入力してください" rows="10"></textarea>
+            </div>       
             <div class="column is-half">
                 <div class="select">
                     <select id="conversionType">
@@ -28,13 +36,8 @@
                         <option value="Alpha" selected>アルファポリス</option>
                     </select>
                 </div>
-            </div>            
-            <div class="column is-half">
-                <textarea id="beforeText" class="textarea is-primary" placeholder="変換する文章を入力してください" rows="10"></textarea>
-            </div>
-            <div class="column is-half">
                 <textarea id="afterText" class="textarea" placeholder="変換された文章が表示されます" rows="10" readonly></textarea>
-            </div>
+            </div>     
         </div>
     </section>
 </body>
