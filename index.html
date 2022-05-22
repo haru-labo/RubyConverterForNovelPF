@@ -17,12 +17,21 @@
 </head>
 <body>
     <header>
-        <h1 class="title is-1 is-spaced mt-5 ml-5">小説投稿サイト別 ルビ記号変換ツール</h1>
+        <nav class="navbar is-primary">
+            <div class="navbar-brand">
+                <h1 class="title navbar-item">小説投稿サイト別 ルビ記号変換ツール</h1>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-start">
+                    <a class="navbar-item"><ion-icon name="information-circle-sharp"></ion-icon>使い方</a>
+                </div>
+            </div>
+        </nav>
     </header>
     <section class="section">
         <div class="columns is-multiline">
             <div class="column is-half">
-                <div class="select">
+                <div class="select is-primary">
                     <select id="inputType">
                         <option value="Narou" selected>小説家になろう/ノべラボ</option>
                         <option value="Alpha">アルファポリス</option>
@@ -31,15 +40,34 @@
                 <textarea id="beforeText" class="textarea is-primary" placeholder="変換する文章を入力してください" rows="10"></textarea>
             </div>       
             <div class="column is-half">
-                <div class="select">
+                <div class="select is-info">
                     <select id="conversionType">
                         <option value="Narou">小説家になろう/ノべラボ</option>
                         <option value="Alpha" selected>アルファポリス</option>
                     </select>
                 </div>
-                <textarea id="afterText" class="textarea" placeholder="変換された文章が表示されます" rows="10" readonly></textarea>
+                <textarea id="afterText" class="textarea is-info" placeholder="変換された文章が表示されます" rows="10" readonly></textarea>
             </div>     
         </div>
     </section>
+    <!-- 使い方のモーダルウィンドウ -->
+    <div class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">使い方</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <ol>
+                    <li>緑枠のドロップダウンから変換元のサイトを選択します</li>
+                    <li>緑枠のテキストエリアに変換したい文章を入力します</li>
+                    <li>青枠のドロップダウンから変換先のサイトを選択します</li>
+                    <li>青枠のテキストエリアに変換した文章が表示されます</li>
+                    <li>青枠のテキストエリアをダブルクリックすると変換後の文章がクリップボードにコピーされます</li>
+                </ol>
+            </section>
+        </div>
+    </div>
 </body>
 </html>
