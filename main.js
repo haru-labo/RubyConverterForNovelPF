@@ -99,4 +99,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('conversionType').addEventListener('change', convert);
     document.getElementById('beforeText').addEventListener('change', convert);
     document.getElementById('afterText').addEventListener('dblclick', copyAfterText);
+    document.getElementById('copyText').addEventListener('click', copyAfterText);
 });
