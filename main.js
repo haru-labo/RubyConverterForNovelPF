@@ -93,8 +93,19 @@ const copyAfterText = () => {
         );
 };
 
+//modalウィンドウ処理
+const openHowToUse = () => {
+    document.getElementById('modalHowToUse').classList.add('is-active');
+};
+
+const closeHowToUse = () => {
+    document.getElementById('modalHowToUse').classList.remove('is-active');    
+};
+
 //DOMツリー構成で実行（初期化処理）
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('howToUse').addEventListener('click', openHowToUse);
+    document.getElementById('closeHowToUse').addEventListener('click', closeHowToUse);
     document.getElementById('inputType').addEventListener('change', convert);
     document.getElementById('conversionType').addEventListener('change', convert);
     document.getElementById('beforeText').addEventListener('change', convert);

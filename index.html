@@ -24,7 +24,7 @@
             </div>
             <div class="navbar-menu is-active">
                 <div class="navbar-start">
-                    <a class="navbar-item"><ion-icon name="information-circle-sharp"></ion-icon>使い方</a>
+                    <a id="howToUse" class="navbar-item"><ion-icon name="information-circle-sharp"></ion-icon>使い方</a>
                 </div>
             </div>
         </nav>
@@ -59,12 +59,12 @@
         </div>
     </section>
     <!-- 使い方のモーダルウィンドウ -->
-    <div class="modal">
+    <div id="modalHowToUse" class="modal">
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">使い方</p>
-                <button class="delete" aria-label="close"></button>
+                <button id="closeHowToUse" class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
                 <ol>
@@ -72,7 +72,7 @@
                     <li>緑枠のテキストエリアに変換したい文章を入力します</li>
                     <li>青枠のドロップダウンから変換先のサイトを選択します</li>
                     <li>青枠のテキストエリアに変換した文章が表示されます</li>
-                    <li>青枠のテキストエリアをダブルクリックすると変換後の文章がクリップボードにコピーされます</li>
+                    <li>コピーボタンもしくは青枠のテキストエリア内をダブルクリックすると変換後の文章がクリップボードにコピーされます</li>
                 </ol>
             </section>
         </div>
