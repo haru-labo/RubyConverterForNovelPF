@@ -1,4 +1,8 @@
+/**
+ * @classdesc 本ツールのメイン処理です。
+ */
 'use strict';
+
 //入力・変換タイプの選択肢のValue値
 const TYPE_NAROU = 'Narou';
 const TYPE_ALPHA = 'Alpha'
