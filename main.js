@@ -5,11 +5,14 @@ const TYPE_ALPHA = 'Alpha'
 //サイトごとのルビ記号の正規表現オブジェクト
 const REGEX_RUBY_NAROU = new RegExp(/\|.*《.*》/, 'gm');
 const REGEX_RUBY_ALPHA = new RegExp(/#.*__.*__#/, 'gm');
-//漢字とルビのインデックス
+//漢字とルビの配列インデックス番号
 const KANJI = 0;
 const RUBY = 1;
 
-//変換処理
+/**
+ * 変換前のテキストエリアの文字列のルビ記号部分を置換し、
+ * 変換後テキストエリアに反映する処理です。
+ */
 const convert = () => {
     const beforeText = document.getElementById('beforeText').value;
     const inputType = document.getElementById('inputType').value;
@@ -21,7 +24,13 @@ const convert = () => {
     }
 };
 
-//元テキストを置換
+/**
+ * 変換前形式のルビ記号を変換後形式のルビ記号に置換する処理です。
+ * @param {String} inputType 変換前形式（小説投稿サイト）
+ * @param {String} convType 変換後形式（小説投稿サイト）
+ * @param {String} str 変換対象文字列
+ * @return {String} 変換後の文字列
+ */
 const repStr = (inputType, convType, str) => {
     let result = str;
     str.match(rubyRegex(inputType)).forEach(element => {
@@ -43,7 +52,12 @@ const repStr = (inputType, convType, str) => {
     return result;
 };
 
-//変換前の漢字とルビを配列で返す
+/**
+ * 文字列のルビ記号部分を漢字とルビに分けて返します。
+ * @param {String} inputType 読み込み形式（小説投稿サイト）
+ * @param {String} str 分割対象文字列
+ * @return {String[]} 分割後の文字列配列[漢字,ルビ]
+ */
 const kanjiAndRuby = (inputType, str) => {
     let result;
     switch(inputType) {
@@ -60,7 +74,11 @@ const kanjiAndRuby = (inputType, str) => {
     return result;  
 };
 
-//サイトに応じたルビ記法の正規表現オブジェクトを返す
+/**
+ * 小説投稿サイトごとのルビ記号部分の正規表現を返します。
+ * @param {String} inputType 形式（小説投稿サイト）
+ * @return {RegExp} 形式で指定された小説投稿サイトのルビ記号部分の正規表現オブジェクト
+ */
 const rubyRegex = inputOrConvType => {
     let pattern;
     switch(inputOrConvType) {
@@ -77,7 +95,9 @@ const rubyRegex = inputOrConvType => {
     return pattern;
 };
 
-//変換後のテキストをコピー
+/**
+ * 変換後テキストボックスに入力されている文字列をコピーする処理です。
+ */
 const copyAfterText = () => {
     const text = document.getElementById('afterText').value;
     navigator.clipboard.writeText(text)
@@ -93,16 +113,66 @@ const copyAfterText = () => {
         );
 };
 
-//modalウィンドウ処理
+/**
+ * 変換後テキストボックスに入力されている文字列をテキストファイルとしてダウンロードする処理です。
+ * ファイル名形式：変換後形式の小説サイト名_現在日付時刻.txt
+ */
+const downloadAfterText = () => {
+    const blob = new Blob([document.getElementById('afterText').value], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.download = selectedConvTypeText() + '_' + nowDateTime() + '.txt';
+    a.href = url;
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+};
+
+/**
+ * 変換後形式のドロップダウンボックスで選択されている
+ * 変換形式（小説投稿サイト名）を返します。
+ * @return {String} 選択されている小説投稿サイト名
+ */
+const selectedConvTypeText = () => {
+    const obj = document.getElementById('conversionType');
+    const idx = obj.selectedIndex;
+    return obj.options[idx].text;
+};
+
+/**
+ * 現在の日付・時刻を結合した文字列を返します。
+ * 月・日・時・分・秒は2ケタ0埋めです。
+ * @return {String} 現在の日付・時刻を結合した文字列
+ */
+const nowDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear().toString();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const date = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    return year + month + date + hours + minutes + seconds;
+};
+
+/**
+ * 使い方画面のモーダルウィンドウを開く処理です。
+ */
 const openHowToUse = () => {
     document.getElementById('modalHowToUse').classList.add('is-active');
 };
 
+/**
+ * 使い方画面のモーダルウィンドウを閉じる処理です。
+ */
 const closeHowToUse = () => {
     document.getElementById('modalHowToUse').classList.remove('is-active');    
 };
 
-//DOMツリー構成で実行（初期化処理）
+/**
+ * 初期化処理です。
+ * DOM読み込み時に各イベントリスナーを登録します。
+ */
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('howToUse').addEventListener('click', openHowToUse);
     document.getElementById('closeHowToUse').addEventListener('click', closeHowToUse);
@@ -111,4 +181,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('beforeText').addEventListener('change', convert);
     document.getElementById('afterText').addEventListener('dblclick', copyAfterText);
     document.getElementById('copyText').addEventListener('click', copyAfterText);
+    document.getElementById('downloadText').addEventListener('click', downloadAfterText);
 });
