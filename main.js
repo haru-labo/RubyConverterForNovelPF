@@ -5,10 +5,15 @@
 
 //入力・変換タイプの選択肢のValue値
 const TYPE_NAROU = 'Narou';
-const TYPE_ALPHA = 'Alpha'
+const TYPE_KAKUYOMU = 'Kakuyomu';
+const TYPE_ALPHA = 'Alpha';
 //サイトごとのルビ記号の正規表現オブジェクト
-const REGEX_RUBY_NAROU = new RegExp(/\|.*《.*》/, 'gm');
+const REGEX_RUBY_NAROU = new RegExp(/\|.*[《|\(|（].*[》|\)|）]/, 'gm');
+const REGEX_RUBY_KAKUYOMU = new RegExp(/\|.*《.*》/, 'gm');
 const REGEX_RUBY_ALPHA = new RegExp(/#.*__.*__#/, 'gm');
+//サイトごとの傍点記法の正規表現オブジェクト
+const REGEX_DOTS_NAROU = new RegExp(/《《.*》》/, 'gm');
+const REGEX_DOTS_ALPHA = new RegExp(/#.*__・+__#/, 'gm');
 //漢字とルビの配列インデックス番号
 const KANJI = 0;
 const RUBY = 1;
@@ -42,6 +47,7 @@ const repStr = (inputType, convType, str) => {
         let orgKanjiAndRuby = kanjiAndRuby(inputType, element);
         switch(convType) {
             case TYPE_NAROU : 
+            case TYPE_KAKUYOMU :
                 convStr = '|' + orgKanjiAndRuby[KANJI] + '《' + orgKanjiAndRuby[RUBY] + '》';
                 break;
             case TYPE_ALPHA :
@@ -66,6 +72,9 @@ const kanjiAndRuby = (inputType, str) => {
     let result;
     switch(inputType) {
         case TYPE_NAROU : 
+            result = str.replace(/\||》|\)|）/g, '').split(/《|\(|（/);
+            break;
+        case TYPE_KAKUYOMU : 
             result = str.replace(/\||》/g, '').split('《');
             break;
         case TYPE_ALPHA :
@@ -88,6 +97,9 @@ const rubyRegex = inputOrConvType => {
     switch(inputOrConvType) {
         case TYPE_NAROU : 
             pattern = REGEX_RUBY_NAROU;
+            break;
+        case TYPE_KAKUYOMU : 
+            pattern = REGEX_RUBY_KAKUYOMU;
             break;
         case TYPE_ALPHA :
             pattern = REGEX_RUBY_ALPHA;
