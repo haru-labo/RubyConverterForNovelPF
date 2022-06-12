@@ -19,18 +19,73 @@ const KANJI = 0;
 const RUBY = 1;
 
 /**
- * 変換前のテキストエリアの文字列のルビ記号部分を置換し、
+ * 変換前のテキストエリアの文字列のルビ記号部分と傍点記号を置換し、
  * 変換後テキストエリアに反映する処理です。
  */
 const convert = () => {
-    const beforeText = document.getElementById('beforeText').value;
     const inputType = document.getElementById('inputType').value;
     const convType = document.getElementById('conversionType').value;
-    if (rubyRegex(inputType).test(beforeText)) {
-        document.getElementById('afterText').value = repStr(inputType, convType, beforeText);
-    } else {
-        document.getElementById('afterText').value = beforeText
+    let targetStr = document.getElementById('beforeText').value;
+    if (dotsRegex(inputType).test(targetStr)) {
+        targetStr = repStrDots(inputType, convType, targetStr);
     }
+    if (rubyRegex(inputType).test(targetStr)) {
+        document.getElementById('afterText').value = repStrRuby(inputType, convType, targetStr);
+    } else {
+        document.getElementById('afterText').value = targetStr
+    }
+};
+
+/**
+ * 変換前形式の傍点記号を変換後形式の傍点記号に置換する処理です。
+ * @param {String} inputType 変換前形式（小説投稿サイト）
+ * @param {String} convType 変換後形式（小説投稿サイト）
+ * @param {String} str 変換対象文字列
+ * @return {String} 変換後の文字列
+ */
+ const repStrDots = (inputType, convType, str) => {
+    let result = str;
+    str.match(dotsRegex(inputType)).forEach(element => {
+        let convStr;
+        let dotsStr = extractDotsStr(inputType, element);
+        switch(convType) {
+            case TYPE_NAROU : 
+            case TYPE_KAKUYOMU :
+                convStr = '《《' + dotsStr + '》》';
+                break;
+            case TYPE_ALPHA :
+                convStr = '#' + dotsStr + '__' + '・'.repeat(dotsStr.length) + '__#';
+                break;
+            default :
+                convStr = null;
+                break;
+        }
+        result = result.replace(element, convStr);
+    });
+    return result;
+};
+
+/**
+ * 入力された文字列の傍点記号の対象となる文字列を返します。
+ * @param {String} inputType 読み込み形式（小説投稿サイト）
+ * @param {String} str 処理対象の対象文字列
+ * @return {String} 傍点対象の文字列
+ */
+ const extractDotsStr = (inputType, str) => {
+    let result;
+    switch(inputType) {
+        case TYPE_NAROU : 
+        case TYPE_KAKUYOMU : 
+            result = str.replace(/\||《《|》》/g, '');
+            break;
+        case TYPE_ALPHA :
+            result = str.replace(/^#|__・+__#/g, '');
+            break;
+        default :
+            result = null;
+            break;
+    }
+    return result;  
 };
 
 /**
@@ -40,7 +95,7 @@ const convert = () => {
  * @param {String} str 変換対象文字列
  * @return {String} 変換後の文字列
  */
-const repStr = (inputType, convType, str) => {
+const repStrRuby = (inputType, convType, str) => {
     let result = str;
     str.match(rubyRegex(inputType)).forEach(element => {
         let convStr;
@@ -60,6 +115,28 @@ const repStr = (inputType, convType, str) => {
         result = result.replace(element, convStr);
     });
     return result;
+};
+
+/**
+ * 小説投稿サイトごとの傍点記号部分の正規表現を返します。
+ * @param {String} inputType 形式（小説投稿サイト）
+ * @return {RegExp} 形式で指定された小説投稿サイトの傍点記号部分の正規表現オブジェクト
+ */
+ const dotsRegex = inputOrConvType => {
+    let pattern;
+    switch(inputOrConvType) {
+        case TYPE_NAROU : 
+        case TYPE_KAKUYOMU : 
+            pattern = REGEX_DOTS_NAROU;
+            break;
+        case TYPE_ALPHA :
+            pattern = REGEX_DOTS_ALPHA;
+            break;
+        default :
+            pattern = null;
+            break;
+    }
+    return pattern;
 };
 
 /**
