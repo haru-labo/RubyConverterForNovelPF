@@ -8,12 +8,13 @@ const TYPE_NAROU = 'Narou';
 const TYPE_KAKUYOMU = 'Kakuyomu';
 const TYPE_ALPHA = 'Alpha';
 //サイトごとのルビ記号の正規表現オブジェクト
-const REGEX_RUBY_NAROU = new RegExp(/\|.*[《|\(|（].*[》|\)|）]/, 'gm');
-const REGEX_RUBY_KAKUYOMU = new RegExp(/\|.*《.*》/, 'gm');
-const REGEX_RUBY_ALPHA = new RegExp(/#.*__.*__#/, 'gm');
+const REGEX_RUBY_NAROU = new RegExp(/[\|｜].+[《\(（].+[》\)）]/, 'gm');
+const REGEX_RUBY_KAKUYOMU = new RegExp(/[\|｜].+《.+》/, 'gm');
+const REGEX_RUBY_ALPHA = new RegExp(/#.+__.+__#/, 'gm');
 //サイトごとの傍点記法の正規表現オブジェクト
-const REGEX_DOTS_NAROU = new RegExp(/《《.*》》/, 'gm');
-const REGEX_DOTS_ALPHA = new RegExp(/#.*__・+__#/, 'gm');
+const REGEX_DOTS_NAROU = new RegExp(/[\|｜].+《・+》/, 'gm');
+const REGEX_DOTS_KAKUYOMU = new RegExp(/《《.+》》/, 'gm');
+const REGEX_DOTS_ALPHA = new RegExp(/#.+__・+__#/, 'gm');
 //漢字とルビの配列インデックス番号
 const KANJI = 0;
 const RUBY = 1;
@@ -50,6 +51,8 @@ const convert = () => {
         let dotsStr = extractDotsStr(inputType, element);
         switch(convType) {
             case TYPE_NAROU : 
+                convStr = dotsStr.split('').map(value => '|' + value + '《・》').join('');
+                break;
             case TYPE_KAKUYOMU :
                 convStr = '《《' + dotsStr + '》》';
                 break;
@@ -75,8 +78,10 @@ const convert = () => {
     let result;
     switch(inputType) {
         case TYPE_NAROU : 
+            result = str.replace(/\||｜|《|》|・/g, '');
+            break;
         case TYPE_KAKUYOMU : 
-            result = str.replace(/\||《《|》》/g, '');
+            result = str.replace(/《《|》》/g, '');
             break;
         case TYPE_ALPHA :
             result = str.replace(/^#|__・+__#/g, '');
@@ -126,8 +131,10 @@ const repStrRuby = (inputType, convType, str) => {
     let pattern;
     switch(inputOrConvType) {
         case TYPE_NAROU : 
-        case TYPE_KAKUYOMU : 
             pattern = REGEX_DOTS_NAROU;
+            break;
+        case TYPE_KAKUYOMU : 
+            pattern = REGEX_DOTS_KAKUYOMU;
             break;
         case TYPE_ALPHA :
             pattern = REGEX_DOTS_ALPHA;
@@ -149,10 +156,10 @@ const kanjiAndRuby = (inputType, str) => {
     let result;
     switch(inputType) {
         case TYPE_NAROU : 
-            result = str.replace(/\||》|\)|）/g, '').split(/《|\(|（/);
+            result = str.replace(/\||｜|》|\)|）/g, '').split(/《|\(|（/);
             break;
         case TYPE_KAKUYOMU : 
-            result = str.replace(/\||》/g, '').split('《');
+            result = str.replace(/\||｜|》/g, '').split('《');
             break;
         case TYPE_ALPHA :
             result = str.replace(/^#|__#/g, '').split('__');
