@@ -8,13 +8,13 @@ const TYPE_NAROU = 'Narou';
 const TYPE_KAKUYOMU = 'Kakuyomu';
 const TYPE_ALPHA = 'Alpha';
 //サイトごとのルビ記号の正規表現オブジェクト
-const REGEX_RUBY_NAROU = new RegExp(/[\|｜].+[《\(（].+[》\)）]/, 'gm');
-const REGEX_RUBY_KAKUYOMU = new RegExp(/[\|｜].+《.+》/, 'gm');
-const REGEX_RUBY_ALPHA = new RegExp(/#.+__.+__#/, 'gm');
+const REGEX_RUBY_NAROU = new RegExp(/[\|｜].+?[《\(（].+?[》\)）]/, 'gm');
+const REGEX_RUBY_KAKUYOMU = new RegExp(/[\|｜].+?《.+?》/, 'gm');
+const REGEX_RUBY_ALPHA = new RegExp(/#.+?__.+?__#/, 'gm');
 //サイトごとの傍点記法の正規表現オブジェクト
-const REGEX_DOTS_NAROU = new RegExp(/[\|｜].+《・+》/, 'gm');
-const REGEX_DOTS_KAKUYOMU = new RegExp(/《《.+》》/, 'gm');
-const REGEX_DOTS_ALPHA = new RegExp(/#.+__・+__#/, 'gm');
+const REGEX_DOTS_NAROU = new RegExp(/[\|｜].+?《・+?》/, 'gm');
+const REGEX_DOTS_KAKUYOMU = new RegExp(/《《.+?》》/, 'gm');
+const REGEX_DOTS_ALPHA = new RegExp(/#.+?__・+?__#/, 'gm');
 //漢字とルビの配列インデックス番号
 const KANJI = 0;
 const RUBY = 1;
@@ -27,14 +27,17 @@ const convert = () => {
     const inputType = document.getElementById('inputType').value;
     const convType = document.getElementById('conversionType').value;
     let targetStr = document.getElementById('beforeText').value;
-    if (dotsRegex(inputType).test(targetStr)) {
-        targetStr = repStrDots(inputType, convType, targetStr);
+    if (inputType != convType) {
+        // 傍点記法を変換
+        if (dotsRegex(inputType).test(targetStr)) {
+            targetStr = repStrDots(inputType, convType, targetStr);
+        }
+        // ルビ記法を変換
+        if (rubyRegex(inputType).test(targetStr)) {
+            targetStr = repStrRuby(inputType, convType, targetStr);
+        } 
     }
-    if (rubyRegex(inputType).test(targetStr)) {
-        document.getElementById('afterText').value = repStrRuby(inputType, convType, targetStr);
-    } else {
-        document.getElementById('afterText').value = targetStr
-    }
+    document.getElementById('afterText').value = targetStr
 };
 
 /**
