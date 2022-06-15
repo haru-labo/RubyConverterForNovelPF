@@ -7,14 +7,17 @@
 const TYPE_NAROU = 'Narou';
 const TYPE_KAKUYOMU = 'Kakuyomu';
 const TYPE_ALPHA = 'Alpha';
+const TYPE_PIXIV = 'Pixiv'
 //サイトごとのルビ記号の正規表現オブジェクト
 const REGEX_RUBY_NAROU = new RegExp(/[\|｜].+?[《\(（].+?[》\)）]/, 'gm');
 const REGEX_RUBY_KAKUYOMU = new RegExp(/[\|｜].+?《.+?》/, 'gm');
 const REGEX_RUBY_ALPHA = new RegExp(/#.+?__.+?__#/, 'gm');
+const REGEX_RUBY_PIXIV = new RegExp(/\[\[rb\:.*? \> .*?\]\]/, 'gm');
 //サイトごとの傍点記法の正規表現オブジェクト
 const REGEX_DOTS_NAROU = new RegExp(/[\|｜].+?《・+?》/, 'gm');
 const REGEX_DOTS_KAKUYOMU = new RegExp(/《《.+?》》/, 'gm');
 const REGEX_DOTS_ALPHA = new RegExp(/#.+?__・+?__#/, 'gm');
+const REGEX_DOTS_PIXIV = new RegExp(/\[\[rb\:.*? \> ・*?\]\]/, 'gm');
 //漢字とルビの配列インデックス番号
 const KANJI = 0;
 const RUBY = 1;
@@ -62,6 +65,9 @@ const convert = () => {
             case TYPE_ALPHA :
                 convStr = '#' + dotsStr + '__' + '・'.repeat(dotsStr.length) + '__#';
                 break;
+            case TYPE_PIXIV :
+                convStr = '[[rb:' + dotsStr + ' > ' + '・'.repeat(dotsStr.length) + ']]'; 
+                break;
             default :
                 convStr = null;
                 break;
@@ -87,8 +93,10 @@ const convert = () => {
             result = str.replace(/《《|》》/g, '');
             break;
         case TYPE_ALPHA :
-            result = str.replace(/^#|__・+__#/g, '');
+            result = str.replace(/^#|__・+?__#/g, '');
             break;
+        case TYPE_PIXIV :
+            result = str.replace(/^(\[\[rb\:)|( \> ・+?\]\])$/g, '');
         default :
             result = null;
             break;
@@ -116,6 +124,9 @@ const repStrRuby = (inputType, convType, str) => {
             case TYPE_ALPHA :
                 convStr = '#' + orgKanjiAndRuby[KANJI] + '__' + orgKanjiAndRuby[RUBY] + '__#';
                 break;
+            case TYPE_PIXIV :
+                convStr = '[[rb:' + orgKanjiAndRuby[KANJI] + ' > ' + orgKanjiAndRuby[RUBY] + ']]'; 
+                break;
             default :
                 convStr = null;
                 break;
@@ -142,6 +153,9 @@ const repStrRuby = (inputType, convType, str) => {
         case TYPE_ALPHA :
             pattern = REGEX_DOTS_ALPHA;
             break;
+        case TYPE_PIXIV :
+            pattern = REGEX_DOTS_PIXIV;
+            break;
         default :
             pattern = null;
             break;
@@ -167,6 +181,9 @@ const kanjiAndRuby = (inputType, str) => {
         case TYPE_ALPHA :
             result = str.replace(/^#|__#/g, '').split('__');
             break;
+        case TYPE_PIXIV :
+            result = str.replace(/^(\[\[rb\:)|(\]\])$/g, '').split(' > ');
+            break;
         default :
             result = null;
             break;
@@ -190,6 +207,9 @@ const rubyRegex = inputOrConvType => {
             break;
         case TYPE_ALPHA :
             pattern = REGEX_RUBY_ALPHA;
+            break;
+        case TYPE_PIXIV :
+            pattern = REGEX_RUBY_PIXIV;
             break;
         default :
             pattern = null;
