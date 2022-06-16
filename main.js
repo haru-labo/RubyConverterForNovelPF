@@ -9,15 +9,15 @@ const TYPE_KAKUYOMU = 'Kakuyomu';
 const TYPE_ALPHA = 'Alpha';
 const TYPE_PIXIV = 'Pixiv'
 //サイトごとのルビ記号の正規表現オブジェクト
-const REGEX_RUBY_NAROU = new RegExp(/[\|｜].+?[《\(（].+?[》\)）]/, 'gm');
-const REGEX_RUBY_KAKUYOMU = new RegExp(/[\|｜].+?《.+?》/, 'gm');
-const REGEX_RUBY_ALPHA = new RegExp(/#.+?__.+?__#/, 'gm');
-const REGEX_RUBY_PIXIV = new RegExp(/\[\[rb\:.*? \> .*?\]\]/, 'gm');
+const REGEX_RUBY_NAROU = new RegExp('[\\|｜].+?[《\\(（].+?[》\\)）]', 'gm');
+const REGEX_RUBY_KAKUYOMU = new RegExp('[\\|｜].+?《.+?》', 'gm');
+const REGEX_RUBY_ALPHA = new RegExp('#.+?__.+?__#', 'gm');
+const REGEX_RUBY_PIXIV = new RegExp('\\[\\[rb:.+? > .+?\\]\\]', 'gm');
 //サイトごとの傍点記法の正規表現オブジェクト
-const REGEX_DOTS_NAROU = new RegExp(/[\|｜].+?《・+?》/, 'gm');
-const REGEX_DOTS_KAKUYOMU = new RegExp(/《《.+?》》/, 'gm');
-const REGEX_DOTS_ALPHA = new RegExp(/#.+?__・+?__#/, 'gm');
-const REGEX_DOTS_PIXIV = new RegExp(/\[\[rb\:.*? \> ・*?\]\]/, 'gm');
+const REGEX_DOTS_NAROU = new RegExp('[\\|｜][^\\|｜]+?《・+?》', 'gm');
+const REGEX_DOTS_KAKUYOMU = new RegExp('《《.+?》》', 'gm');
+const REGEX_DOTS_ALPHA = new RegExp('#[^#]+?__・+?__#', 'gm');
+const REGEX_DOTS_PIXIV = new RegExp('\\[\\[rb:[^(\\[\\[rb:)]+? > ・+?\\]\\]', 'gm');
 //漢字とルビの配列インデックス番号
 const KANJI = 0;
 const RUBY = 1;
@@ -96,7 +96,8 @@ const convert = () => {
             result = str.replace(/^#|__・+?__#/g, '');
             break;
         case TYPE_PIXIV :
-            result = str.replace(/^(\[\[rb\:)|( \> ・+?\]\])$/g, '');
+            result = str.replace(/^(\[\[rb:)|( > ・+?\]\])$/g, '');
+            break;
         default :
             result = null;
             break;
@@ -182,7 +183,7 @@ const kanjiAndRuby = (inputType, str) => {
             result = str.replace(/^#|__#/g, '').split('__');
             break;
         case TYPE_PIXIV :
-            result = str.replace(/^(\[\[rb\:)|(\]\])$/g, '').split(' > ');
+            result = str.replace(/^(\[\[rb:)|(\]\])$/g, '').split(' > ');
             break;
         default :
             result = null;
